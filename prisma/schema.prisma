@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  
+  shares        BottleShare[]   @relation("Creator")
+  participations Participation[]
+  comments      Comment[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model BottleShare {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  creatorId     String
+  creator       User     @relation("Creator", fields: [creatorId], references: [id])
+
+  whiskyName    String
+  whiskyImage   String?
+  distillery    String?
+  abv           Float?
+  yearsOld      Int?
+  condition     String   @default("NEW") // "NEW" or "OPENED"
+
+  totalVolume   Int      // e.g. 700
+  volumePerSlot Int      // e.g. 100
+  totalSlots    Int      // Computed or input (e.g. 7)
+  
+  pricePerSlot  Int      // Price for one slot
+  
+  eventDate     String?
+  eventLocation String?  // e.g. "Seoul Gangnam" or "Offline"
+  description   String?  @db.Text
+  
+  status        String   @default("OPEN") // "OPEN", "CLOSED", "COMPLETED"
+
+  participations Participation[]
+  comments       Comment[]
+
+  @@index([creatorId])
+}
+
+model Participation {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  
+  shareId       String
+  share         BottleShare @relation(fields: [shareId], references: [id])
+
+  slots         Int      @default(1) // Number of slots reserved
+  status        String   @default("PENDING") // "PENDING", "PAID", "CONFIRMED"
+
+  @@index([userId])
+  @@index([shareId])
+}
+
+model Comment {
+  id            String   @id @default(cuid())
+  content       String   @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  shareId       String
+  share         BottleShare @relation(fields: [shareId], references: [id])
+
+  @@index([userId])
+  @@index([shareId])
+}

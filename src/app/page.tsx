@@ -1,65 +1,73 @@
-import Image from "next/image";
+import { BottleCard } from "@/components/share/bottle-card"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+import Link from "next/link"
+import { prisma } from "@/lib/prisma"
 
-export default function Home() {
+export default async function Home() {
+  const shares = await prisma.bottleShare.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      participations: true,
+    },
+  })
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-gradient-to-b from-background to-background/50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* Hero Section */}
+        <header className="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-border/50 pb-8">
+          <div className="space-y-2 text-center md:text-left">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary drop-shadow-[0_2px_10px_rgba(234,179,8,0.2)]">
+              BOTTLE SHARE
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl font-medium">
+              희귀하고 비싼 위스키를 함께 탐험하세요. <br className="hidden sm:block" />
+              취향이 맞는 분들과 최고의 보틀을 쉐어합니다.
+            </p>
+          </div>
+          <Link href="/share/create">
+            <Button size="lg" className="rounded-full px-6 font-bold shadow-lg shadow-primary/20">
+              <Plus className="mr-2 h-5 w-5" /> 계획 만들기
+            </Button>
+          </Link>
+        </header>
+
+        {/* Filters and List */}
+        <div className="space-y-8">
+          <div className="flex justify-between items-end border-b border-border/30 pb-4">
+            <h2 className="text-2xl font-bold">진행 중인 쉐어</h2>
+            <div className="flex gap-4 text-sm font-medium text-muted-foreground">
+              <span className="text-primary cursor-pointer">전체</span>
+              <span className="hover:text-primary cursor-pointer transition-colors">피트</span>
+              <span className="hover:text-primary cursor-pointer transition-colors">쉐리</span>
+              <span className="hover:text-primary cursor-pointer transition-colors">버번</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {shares.map((share: any) => {
+              const occupiedSlots = share.participations.reduce((sum: number, p: any) => sum + p.slots, 0)
+              return (
+                <BottleCard
+                  key={share.id}
+                  id={share.id}
+                  title={share.whiskyName}
+                  distillery={share.distillery || "Unknown"}
+                  image={share.whiskyImage || "https://images.unsplash.com/photo-1599566217208-aa9281d3d197?q=80&w=1974&auto=format&fit=crop"}
+                  abv={share.abv?.toString() || "40"}
+                  age={share.yearsOld?.toString()}
+                  pricePerSlot={share.pricePerSlot}
+                  totalSlots={share.totalSlots}
+                  occupiedSlots={occupiedSlots}
+                  volumePerSlot={`${share.volumePerSlot}ml`}
+                  status={share.status === "OPEN" ? "RECRUITING" : "FINISHED"}
+                />
+              )
+            })}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      </div>
+    </main>
+  )
 }
