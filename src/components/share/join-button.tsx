@@ -25,7 +25,7 @@ export function JoinButton({ shareId, disabled }: JoinButtonProps) {
             } else {
                 router.refresh()
             }
-        } catch (err) {
+        } catch {
             setError("요청 중 오류가 발생했습니다.")
         } finally {
             setIsPending(false)

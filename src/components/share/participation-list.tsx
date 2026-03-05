@@ -7,14 +7,22 @@ import { updateParticipationStatus } from "@/app/actions-share/share"
 import { Check, CreditCard, Clock } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+interface Participation {
+    id: string
+    userId: string
+    slots: number
+    status: string
+    user?: { name?: string | null; email?: string | null }
+}
+
 interface ParticipationListProps {
-    participations: any[]
+    participations: Participation[]
     currentUserId?: string
     hostId: string
     shareId: string
 }
 
-export function ParticipationList({ participations, currentUserId, hostId, shareId }: ParticipationListProps) {
+export function ParticipationList({ participations, currentUserId, hostId }: ParticipationListProps) {
     const router = useRouter()
     const [isPending, setIsPending] = useState<string | null>(null)
 

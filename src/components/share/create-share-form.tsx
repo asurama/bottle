@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -26,7 +25,6 @@ import { createSharePost } from "@/app/actions-share/share"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 
 const formSchema = z.object({
     whiskyName: z.string().min(2, "이름은 2자 이상이어야 합니다."),
@@ -87,7 +85,7 @@ export default function CreateShareForm() {
             } else {
                 router.push("/")
             }
-        } catch (err) {
+        } catch {
             setError("알 수 없는 오류가 발생했습니다.")
         } finally {
             setIsPending(false)

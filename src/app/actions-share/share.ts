@@ -72,7 +72,14 @@ export async function joinShare(shareId: string, slots: number = 1) {
             return { error: "Share post not found." }
         }
 
-        const occupiedSlots = share.participations.reduce((sum: number, p: any) => sum + p.slots, 0)
+        const existingParticipation = share.participations.find(
+            (p) => p.userId === session.user!.id
+        )
+        if (existingParticipation) {
+            return { error: "이미 이 쉐어에 참여하고 있습니다." }
+        }
+
+        const occupiedSlots = share.participations.reduce((sum: number, p: { slots: number }) => sum + p.slots, 0)
         if (occupiedSlots + slots > share.totalSlots) {
             return { error: "Not enough slots available." }
         }
