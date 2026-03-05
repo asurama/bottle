@@ -1,6 +1,5 @@
-"use client"
-
 import Image from "next/image"
+import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
@@ -18,9 +17,11 @@ interface BottleCardProps {
     occupiedSlots: number
     volumePerSlot: string
     status: "RECRUITING" | "FINISHED" | "CANCELLED"
+    condition?: string
 }
 
 export function BottleCard({
+    id,
     title,
     distillery,
     abv,
@@ -31,11 +32,13 @@ export function BottleCard({
     occupiedSlots,
     volumePerSlot,
     status,
+    condition,
 }: BottleCardProps) {
     const progress = (occupiedSlots / totalSlots) * 100
 
     return (
-        <Card className="overflow-hidden border-border bg-card/50 backdrop-blur-sm transition-all hover:border-primary/50 hover:shadow-[0_0_20px_rgba(234,179,8,0.1)] group">
+        <Link href={`/share/${id}`} className="block">
+        <Card className="overflow-hidden border-border bg-card/50 backdrop-blur-sm transition-all hover:border-primary/50 hover:shadow-[0_0_20px_rgba(234,179,8,0.1)] hover:-translate-y-1 group cursor-pointer">
             <CardHeader className="p-0">
                 <AspectRatio ratio={3 / 4} className="bg-muted">
                     <Image
@@ -48,6 +51,11 @@ export function BottleCard({
                         <Badge variant={status === "RECRUITING" ? "default" : "secondary"}>
                             {status === "RECRUITING" ? "모집중" : "마감"}
                         </Badge>
+                        {condition && (
+                            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">
+                                {condition === "NEW" ? "미개봉" : "개봉"}
+                            </Badge>
+                        )}
                     </div>
                 </AspectRatio>
             </CardHeader>
@@ -86,5 +94,6 @@ export function BottleCard({
                 </Button>
             </CardFooter>
         </Card>
+        </Link>
     )
 }

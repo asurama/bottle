@@ -46,8 +46,8 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {shares.map((share: any) => {
-              const occupiedSlots = share.participations.reduce((sum: number, p: any) => sum + p.slots, 0)
+            {shares.map((share) => {
+              const occupiedSlots = share.participations.reduce((sum: number, p: { slots: number }) => sum + p.slots, 0)
               return (
                 <BottleCard
                   key={share.id}
@@ -62,6 +62,7 @@ export default async function Home() {
                   occupiedSlots={occupiedSlots}
                   volumePerSlot={`${share.volumePerSlot}ml`}
                   status={share.status === "OPEN" ? "RECRUITING" : "FINISHED"}
+                  condition={share.condition}
                 />
               )
             })}

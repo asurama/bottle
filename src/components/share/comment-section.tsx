@@ -2,18 +2,28 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { createComment } from "@/app/actions-share/share"
 import { useRouter } from "next/navigation"
 
-interface CommentSectionProps {
-    shareId: string
-    comments: any[]
-    currentUserId?: string
+interface Comment {
+    id: string
+    content: string
+    createdAt: Date
+    userId: string
+    user?: { name?: string | null; email?: string | null }
 }
 
-export function CommentSection({ shareId, comments, currentUserId }: CommentSectionProps) {
+interface CommentSectionProps {
+    shareId: string
+    comments: Comment[]
+    currentUserId?: string
+    hostId?: string
+}
+
+export function CommentSection({ shareId, comments, currentUserId, hostId }: CommentSectionProps) {
     const [content, setContent] = useState("")
     const [isPending, setIsPending] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -33,7 +43,7 @@ export function CommentSection({ shareId, comments, currentUserId }: CommentSect
                 setContent("")
                 router.refresh()
             }
-        } catch (err) {
+        } catch {
             setError("댓글 작성 중 오류가 발생했습니다.")
         } finally {
             setIsPending(false)
@@ -69,6 +79,12 @@ export function CommentSection({ shareId, comments, currentUserId }: CommentSect
                             <div key={comment.id} className="flex flex-col gap-1 border-l-2 border-muted pl-4 py-1">
                                 <div className="flex items-center gap-2">
                                     <span className="font-bold text-sm">{comment.user?.name || comment.user?.email || "Anonymous"}</span>
+                                    {currentUserId && comment.userId === currentUserId && (
+                                        <Badge className="text-[9px] h-4">Me</Badge>
+                                    )}
+                                    {hostId && comment.userId === hostId && (
+                                        <Badge variant="outline" className="text-[9px] h-4 border-primary text-primary">Host</Badge>
+                                    )}
                                     <span className="text-[10px] text-muted-foreground uppercase">{formatRelativeTime(comment.createdAt)}</span>
                                 </div>
                                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{comment.content}</p>

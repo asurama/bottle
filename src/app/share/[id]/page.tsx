@@ -34,7 +34,7 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
         notFound()
     }
 
-    const occupiedSlots = share.participations.reduce((sum: number, p: any) => sum + p.slots, 0)
+    const occupiedSlots = share.participations.reduce((sum: number, p: { slots: number }) => sum + p.slots, 0)
     const progress = (occupiedSlots / share.totalSlots) * 100
     const isFinished = share.status !== "OPEN" || occupiedSlots >= share.totalSlots
 
@@ -96,7 +96,7 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
                                     <Info className="w-4 h-4" /> STATUS
                                 </div>
                                 <Badge variant="outline" className="text-lg px-0 py-0 h-auto border-none font-bold">
-                                    {share.condition === "NEW" ? "미개봉" : "오픈"}
+                                    {share.condition === "NEW" ? "미개봉" : "개봉"}
                                 </Badge>
                             </div>
                         </div>
@@ -173,6 +173,7 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
                     shareId={share.id}
                     comments={share.comments}
                     currentUserId={session?.user?.id}
+                    hostId={share.creatorId}
                 />
             </div>
         </main>
