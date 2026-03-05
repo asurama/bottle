@@ -79,11 +79,11 @@ export function CommentSection({ shareId, comments, currentUserId, hostId }: Com
                             <div key={comment.id} className="flex flex-col gap-1 border-l-2 border-muted pl-4 py-1">
                                 <div className="flex items-center gap-2">
                                     <span className="font-bold text-sm">{comment.user?.name || comment.user?.email || "Anonymous"}</span>
-                                    {currentUserId && comment.userId === currentUserId && (
-                                        <Badge className="text-[9px] h-4">Me</Badge>
+                                    {comment.userId === currentUserId && (
+                                        <Badge variant="secondary" className="text-[9px] h-4 px-1 font-black bg-primary/10 text-primary border-primary/20">ME</Badge>
                                     )}
-                                    {hostId && comment.userId === hostId && (
-                                        <Badge variant="outline" className="text-[9px] h-4 border-primary text-primary">Host</Badge>
+                                    {comment.userId === hostId && (
+                                        <Badge variant="outline" className="text-[9px] h-4 px-1 font-black border-primary/50 text-primary">HOST</Badge>
                                     )}
                                     <span className="text-[10px] text-muted-foreground uppercase">{formatRelativeTime(comment.createdAt)}</span>
                                 </div>
