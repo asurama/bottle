@@ -25,7 +25,7 @@ function AuthErrorContent() {
     }
 
     return (
-        <div className="flex items-center justify-center min-vh-60 py-20">
+        <div className="flex items-center justify-center min-h-[60vh] py-20">
             <Card className="w-full max-w-md border-destructive/20 bg-card/50">
                 <CardHeader className="text-center">
                     <div className="flex justify-center mb-4">

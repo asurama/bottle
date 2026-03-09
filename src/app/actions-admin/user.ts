@@ -8,7 +8,7 @@ export async function approveUser(userId: string) {
     const session = await auth()
 
     // Security: Check if caller is ADMIN
-    if ((session?.user as any)?.role !== "ADMIN") {
+    if (session?.user?.role !== "ADMIN") {
         return { error: "Unauthorized. Admin privileges required." }
     }
 
@@ -29,7 +29,7 @@ export async function approveUser(userId: string) {
 export async function rejectUser(userId: string) {
     const session = await auth()
 
-    if ((session?.user as any)?.role !== "ADMIN") {
+    if (session?.user?.role !== "ADMIN") {
         return { error: "Unauthorized." }
     }
 
@@ -41,7 +41,7 @@ export async function rejectUser(userId: string) {
 
         revalidatePath("/admin/users")
         return { success: true }
-    } catch (err) {
+    } catch {
         return { error: "Database error." }
     }
 }

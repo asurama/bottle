@@ -25,7 +25,7 @@ export function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6">
-                    {(session?.user as any)?.role === "ADMIN" && (
+                    {session?.user?.role === "ADMIN" && (
                         <Link href="/admin/users">
                             <Button variant="ghost" size="sm" className="font-bold text-primary hover:bg-primary/10">
                                 <ShieldCheck className="w-4 h-4 mr-2" />
@@ -71,7 +71,7 @@ export function Header() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-lg border-primary/20">
-                            {(session?.user as any)?.role === "ADMIN" && (
+                            {session?.user?.role === "ADMIN" && (
                                 <Link href="/admin/users">
                                     <DropdownMenuItem className="font-bold py-3 text-primary cursor-pointer">
                                         <ShieldCheck className="w-4 h-4 mr-2" />

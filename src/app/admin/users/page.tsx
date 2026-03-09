@@ -1,17 +1,17 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { approveUser, rejectUser } from "@/app/actions-admin/user"
-import { UserCheck, UserX, Clock, ShieldCheck } from "lucide-react"
+import { UserCheck, UserX, ShieldCheck } from "lucide-react"
 
 export default async function AdminUsersPage() {
     const session = await auth()
 
     // Security: Server-side role check
-    if ((session?.user as any)?.role !== "ADMIN") {
+    if (session?.user?.role !== "ADMIN") {
         redirect("/")
     }
 

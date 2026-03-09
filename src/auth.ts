@@ -47,7 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ],
     session: { strategy: "jwt" },
     callbacks: {
-        async signIn({ user, account }) {
+        async signIn({ user }) {
             // Block sign in if status is PENDING or SUSPENDED
             // We allow ADMIN to sign in regardless of status during setup if needed, 
             // but usually ADMIN is ACTIVE anyway.
@@ -66,17 +66,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
             return true
         },
-        async jwt({ token, user, trigger, session }) {
+        async jwt({ token, user }) {
             if (user) {
-                token.role = (user as any).role
-                token.status = (user as any).status
+                token.role = user.role
+                token.status = user.status
             }
             return token
         },
         async session({ session, token }) {
             if (token && session.user) {
-                (session.user as any).role = token.role;
-                (session.user as any).status = token.status;
+                session.user.role = token.role as string | undefined;
+                session.user.status = token.status as string | undefined;
             }
             return session
         }
