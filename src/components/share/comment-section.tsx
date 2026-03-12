@@ -13,7 +13,7 @@ interface Comment {
     content: string
     createdAt: Date
     userId: string
-    user?: { name?: string | null; email?: string | null }
+    user?: { name?: string | null; email?: string | null; nickname?: string | null }
 }
 
 interface CommentSectionProps {
@@ -78,14 +78,14 @@ export function CommentSection({ shareId, comments, currentUserId, hostId }: Com
                         {comments.map((comment) => (
                             <div key={comment.id} className="flex flex-col gap-1 border-l-2 border-muted pl-4 py-1">
                                 <div className="flex items-center gap-2">
-                                    <span className="font-bold text-sm">{comment.user?.name || comment.user?.email || "Anonymous"}</span>
+                                    <span className="font-bold text-sm">{comment.user?.nickname || comment.user?.name || comment.user?.email || "Anonymous"}</span>
                                     {comment.userId === currentUserId && (
                                         <Badge variant="secondary" className="text-[9px] h-4 px-1 font-black bg-primary/10 text-primary border-primary/20">ME</Badge>
                                     )}
                                     {comment.userId === hostId && (
                                         <Badge variant="outline" className="text-[9px] h-4 px-1 font-black border-primary/50 text-primary">HOST</Badge>
                                     )}
-                                    <span className="text-[10px] text-muted-foreground uppercase">{formatRelativeTime(comment.createdAt)}</span>
+                                    <span className="text-[10px] text-foreground/70 font-medium uppercase tracking-tight">{formatRelativeTime(comment.createdAt)}</span>
                                 </div>
                                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{comment.content}</p>
                             </div>

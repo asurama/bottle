@@ -4,13 +4,28 @@ import { Plus } from "lucide-react"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>
+}) {
+  const { category } = await searchParams
+
   const shares = await prisma.bottleShare.findMany({
+    where: category && category !== "ALL" ? { category } : {},
     orderBy: { createdAt: "desc" },
     include: {
       participations: true,
     },
   })
+
+  const categories = [
+    { label: "전체", value: "ALL" },
+    { label: "피트", value: "PEAT" },
+    { label: "쉐리", value: "SHERRY" },
+    { label: "버번", value: "BOURBON" },
+    { label: "기타", value: "OTHER" },
+  ]
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-background/50 py-12 px-4 sm:px-6 lg:px-8">
@@ -38,34 +53,50 @@ export default async function Home() {
           <div className="flex justify-between items-end border-b border-border/30 pb-4">
             <h2 className="text-2xl font-bold">진행 중인 쉐어</h2>
             <div className="flex gap-4 text-sm font-medium text-muted-foreground">
-              <span className="text-primary cursor-pointer">전체</span>
-              <span className="hover:text-primary cursor-pointer transition-colors">피트</span>
-              <span className="hover:text-primary cursor-pointer transition-colors">쉐리</span>
-              <span className="hover:text-primary cursor-pointer transition-colors">버번</span>
+              {categories.map((cat) => (
+                <Link
+                  key={cat.value}
+                  href={cat.value === "ALL" ? "/" : `/?category=${cat.value}`}
+                  className={`${category === cat.value || (!category && cat.value === "ALL")
+                    ? "text-primary border-b-2 border-primary"
+                    : "hover:text-primary transition-colors"
+                    } pb-1 cursor-pointer`}
+                >
+                  {cat.label}
+                </Link>
+              ))}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {shares.map((share) => {
-              const occupiedSlots = share.participations.reduce((sum: number, p: { slots: number }) => sum + p.slots, 0)
-              return (
-                <BottleCard
-                  key={share.id}
-                  id={share.id}
-                  title={share.whiskyName}
-                  distillery={share.distillery || "Unknown"}
-                  image={share.whiskyImage || "https://images.unsplash.com/photo-1599566217208-aa9281d3d197?q=80&w=1974&auto=format&fit=crop"}
-                  abv={share.abv?.toString() || "40"}
-                  age={share.yearsOld?.toString()}
-                  pricePerSlot={share.pricePerSlot}
-                  totalSlots={share.totalSlots}
-                  occupiedSlots={occupiedSlots}
-                  volumePerSlot={`${share.volumePerSlot}ml`}
-                  status={share.status === "OPEN" ? "RECRUITING" : "FINISHED"}
-                  condition={share.condition}
-                />
-              )
-            })}
+            {shares.length > 0 ? (
+              shares.map((share) => {
+                const occupiedSlots = share.participations.reduce((sum: number, p: { slots: number }) => sum + p.slots, 0)
+                return (
+                  <BottleCard
+                    key={share.id}
+                    id={share.id}
+                    title={share.whiskyName}
+                    distillery={share.distillery || "Unknown"}
+                    image={share.whiskyImage || "https://images.unsplash.com/photo-1599566217208-aa9281d3d197?q=80&w=1974&auto=format&fit=crop"}
+                    abv={share.abv?.toString() || "40"}
+                    age={share.yearsOld?.toString()}
+                    pricePerSlot={share.pricePerSlot}
+                    totalSlots={share.totalSlots}
+                    occupiedSlots={occupiedSlots}
+                    volumePerSlot={`${share.volumePerSlot}ml`}
+                    status={share.status === "OPEN" ? "RECRUITING" : "FINISHED"}
+                    condition={share.condition}
+                    category={share.category}
+                    endDate={(share as any).endDate}
+                  />
+                )
+              })
+            ) : (
+              <div className="col-span-full py-20 text-center">
+                <p className="text-muted-foreground font-medium">진행 중인 쉐어가 없습니다.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

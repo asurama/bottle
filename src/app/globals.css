@@ -86,12 +86,12 @@
   --secondary: oklch(0.22 0.04 45);
   --secondary-foreground: oklch(0.95 0.03 45);
   --muted: oklch(0.18 0.02 45);
-  --muted-foreground: oklch(0.65 0.05 45);
+  --muted-foreground: oklch(0.75 0.04 45);    /* Increased contrast for WCAG AAA */
   --accent: oklch(0.25 0.05 50);
   --accent-foreground: oklch(0.95 0.03 45);
   --destructive: oklch(0.5 0.15 25);
   --border: oklch(0.25 0.03 45);
-  --input: oklch(0.25 0.03 45);
+  --input: oklch(0.35 0.03 45);     /* Increased border visibility */
   --ring: oklch(0.7 0.15 50);
   --chart-1: oklch(0.7 0.15 50);
   --chart-2: oklch(0.6 0.12 35);

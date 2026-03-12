@@ -8,37 +8,38 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?   // For admin/credentials login
-  role          String    @default("USER") // "USER", "ADMIN"
-  status        String    @default("PENDING") // "PENDING", "ACTIVE", "SUSPENDED"
-  accounts      Account[]
-  sessions      Session[]
-  
-  shares        BottleShare[]   @relation("Creator")
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  image          String?
+  password       String?
+  role           String          @default("USER")
+  status         String          @default("PENDING")
+  birthDate      DateTime?
+  nickname       String?
+  realName       String?
+  accounts       Account[]
+  shares         BottleShare[]   @relation("Creator")
+  comments       Comment[]
   participations Participation[]
-  comments      Comment[]
+  sessions       Session[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -63,67 +64,59 @@ model VerificationToken {
 }
 
 model BottleShare {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  creatorId     String
-  creator       User     @relation("Creator", fields: [creatorId], references: [id])
-
-  whiskyName    String
-  whiskyImage   String?
-  distillery    String?
-  abv           Float?
-  yearsOld      Int?
-  condition     String   @default("NEW") // "NEW" or "OPENED"
-
-  totalVolume   Int      // e.g. 700
-  volumePerSlot Int      // e.g. 100
-  totalSlots    Int      // Computed or input (e.g. 7)
-  
-  pricePerSlot  Int      // Price for one slot
-  
-  eventDate     String?
-  eventLocation String?  // e.g. "Seoul Gangnam" or "Offline"
-  description   String?  @db.Text
-  
-  status        String   @default("OPEN") // "OPEN", "CLOSED", "COMPLETED"
-
-  participations Participation[]
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  creatorId      String
+  whiskyName     String
+  whiskyImage    String?
+  distillery     String?
+  abv            Float?
+  yearsOld       Int?
+  condition      String          @default("NEW")
+  totalVolume    Int
+  volumePerSlot  Int
+  totalSlots     Int
+  pricePerSlot   Int
+  eventDate      String?
+  arrivalDate    DateTime?
+  startDate      DateTime?
+  endDate        DateTime?
+  eventLocation  String?
+  status         String          @default("OPEN")
+  description    String?
+  category       String?         @default("OTHER")
+  creator        User            @relation("Creator", fields: [creatorId], references: [id])
   comments       Comment[]
+  participations Participation[]
 
   @@index([creatorId])
 }
 
 model Participation {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  
-  shareId       String
-  share         BottleShare @relation(fields: [shareId], references: [id])
-
-  slots         Int      @default(1) // Number of slots reserved
-  status        String   @default("PENDING") // "PENDING", "PAID", "CONFIRMED"
+  id        String      @id @default(cuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  userId    String
+  shareId   String
+  slots     Int         @default(1)
+  status    String      @default("PENDING")
+  share     BottleShare @relation(fields: [shareId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([shareId])
 }
 
 model Comment {
-  id            String   @id @default(cuid())
-  content       String   @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-
-  shareId       String
-  share         BottleShare @relation(fields: [shareId], references: [id])
+  id        String      @id @default(cuid())
+  content   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  userId    String
+  shareId   String
+  share     BottleShare @relation(fields: [shareId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([shareId])
