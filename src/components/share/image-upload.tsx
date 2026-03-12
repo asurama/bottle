@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { Area } from "react-easy-crop/types"
+type Area = { x: number; y: number; width: number; height: number }
 import { getCroppedImg } from "@/lib/image-utils"
 import { supabase } from "@/lib/supabase"
 import Cropper from "react-easy-crop"

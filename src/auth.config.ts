@@ -34,10 +34,10 @@ export default {
         },
         async session({ session, token }) {
             if (token && session.user) {
-                session.user.id = token.id ?? token.sub ?? ""
-                session.user.role = token.role
-                session.user.status = token.status
-                session.user.nickname = token.nickname
+                session.user.id = (token.id ?? token.sub ?? "") as string
+                session.user.role = token.role as string | undefined
+                session.user.status = token.status as string | undefined
+                session.user.nickname = token.nickname as string | undefined
             }
             return session
         }
