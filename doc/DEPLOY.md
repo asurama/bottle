@@ -5,17 +5,20 @@ To deploy 'Bottle Share' to Vercel, follow these steps:
 ## 1. Environment Variables
 You must set the following environment variables in the Vercel Project Settings (Settings > Environment Variables):
 
-| Variable | Description |
-|---|---|
-| `DATABASE_URL` | Supabase Connection String (Transaction pooler recommended) |
-| `DIRECT_URL` | Supabase Direct Connection String (for migrations) |
-| `AUTH_SECRET` | Random string for NextAuth. Generate with `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | Your deployment URL (e.g., `https://your-app.vercel.app`) |
-| `EMAIL_SERVER_HOST` | SMTP server host (e.g., `smtp.gmail.com`) |
-| `EMAIL_SERVER_PORT` | SMTP server port (usually `587` or `465`) |
-| `EMAIL_SERVER_USER` | SMTP server username |
-| `EMAIL_SERVER_PASSWORD` | SMTP server password / App password |
-| `EMAIL_FROM` | The email address to send magic links from |
+| Variable | Value (Based on current .env) | Description |
+|---|---|---|
+| `DATABASE_URL` | `postgresql://postgres.klmpkttshseqnvzndfkf:...@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres` | Supabase Connection String (Transaction pooler) |
+| `DIRECT_URL` | `postgresql://postgres.klmpkttshseqnvzndfkf:...@db.klmpkttshseqnvzndfkf.supabase.co:5432/postgres` | Supabase Direct Connection String (Port 5432) |
+| `AUTH_SECRET` | `CaOLCs05e6f1HKbdzwOgXS+tFYkfhC7SMKzLBPuflsE=` | Generated random key for NextAuth |
+| `NEXTAUTH_URL` | `https://your-app.vercel.app` | Your Vercel deployment URL |
+| `EMAIL_SERVER_HOST` | `smtp.example.com` | SMTP server host |
+| `EMAIL_SERVER_PORT` | `587` | SMTP server port |
+| `EMAIL_SERVER_USER` | `test@example.com` | SMTP server username |
+| `EMAIL_SERVER_PASSWORD` | `password` | SMTP server password |
+| `EMAIL_FROM` | `noreply@bottleshare.com` | Sending email address |
+
+> [!TIP]
+> `DIRECT_URL`은 Supabase Settings > Database > Connection string > Node.js (Direct connection)에서 확인하실 수 있습니다. `DATABASE_URL`과 암호는 동일하며 호스트명만 주시해 주세요.
 
 > [!IMPORTANT]
 > Since this project uses NextAuth v5 (Auth.js), make sure `AUTH_SECRET` is set correctly.
