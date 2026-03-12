@@ -73,7 +73,7 @@ export async function updateSharePost(id: string, formData: FormData) {
     try {
         const share = await prisma.bottleShare.findUnique({ where: { id } })
         if (!share) return { error: "글을 찾을 수 없습니다." }
-        if (share.creatorId !== session.user.id && (session.user as any).role !== "ADMIN") return { error: "권한이 없습니다." }
+        if (share.creatorId !== session.user.id && session.user.role !== "ADMIN") return { error: "권한이 없습니다." }
 
         const { totalVolume, volumePerSlot, arrivalDate, startDate, endDate } = validatedFields.data
         const totalSlots = Math.floor(totalVolume / volumePerSlot)
@@ -105,7 +105,7 @@ export async function deleteSharePost(id: string) {
     try {
         const share = await prisma.bottleShare.findUnique({ where: { id } })
         if (!share) return { error: "글을 찾을 수 없습니다." }
-        if (share.creatorId !== session.user.id && (session.user as any).role !== "ADMIN") return { error: "권한이 없습니다." }
+        if (share.creatorId !== session.user.id && session.user.role !== "ADMIN") return { error: "권한이 없습니다." }
 
         await prisma.bottleShare.delete({ where: { id } })
 

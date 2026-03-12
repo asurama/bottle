@@ -15,9 +15,8 @@ export default async function EditSharePage({ params }: { params: Promise<{ id: 
 
     if (!share) notFound()
 
-    const sessionUser = session.user as any
-    const isOwner = sessionUser.id === share.creatorId
-    const isAdmin = sessionUser.role === "ADMIN"
+    const isOwner = session.user.id === share.creatorId
+    const isAdmin = session.user.role === "ADMIN"
 
     if (!isOwner && !isAdmin) {
         redirect(`/share/${id}`)
@@ -25,7 +24,7 @@ export default async function EditSharePage({ params }: { params: Promise<{ id: 
 
     return (
         <main className="min-h-screen bg-background py-8 px-4">
-            <CreateShareForm initialData={share as any} mode="edit" />
+            <CreateShareForm initialData={{...share, category: share.category ?? "OTHER"}} mode="edit" />
         </main>
     )
 }

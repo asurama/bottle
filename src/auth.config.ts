@@ -17,9 +17,9 @@ export default {
         async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id
-                token.role = (user as any).role
-                token.status = (user as any).status
-                token.nickname = (user as any).nickname
+                token.role = user.role
+                token.status = user.status
+                token.nickname = user.nickname
             }
             if (trigger === "update" && session?.user) {
                 // Return updated token with current session data, merging carefully
@@ -34,10 +34,10 @@ export default {
         },
         async session({ session, token }) {
             if (token && session.user) {
-                session.user.id = (token.id as string) || (token.sub as string)
-                    ; (session.user as any).role = token.role;
-                ; (session.user as any).status = token.status;
-                ; (session.user as any).nickname = token.nickname;
+                session.user.id = token.id ?? token.sub ?? ""
+                session.user.role = token.role
+                session.user.status = token.status
+                session.user.nickname = token.nickname
             }
             return session
         }

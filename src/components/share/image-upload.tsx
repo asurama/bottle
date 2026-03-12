@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useCallback } from "react"
+import type { Area } from "react-easy-crop/types"
 import { getCroppedImg } from "@/lib/image-utils"
 import { supabase } from "@/lib/supabase"
 import Cropper from "react-easy-crop"
 import imageCompression from "browser-image-compression"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import { ImagePlus, X, Scissors, Loader2, Check, ZoomIn, ZoomOut } from "lucide-react"
 
 const ASPECT_RATIOS = [
@@ -29,7 +31,7 @@ export default function ImageUpload({ onUploadComplete, defaultValue }: ImageUpl
     const [zoom, setZoom] = useState(1)
     const [aspect, setAspect] = useState(4 / 3)
     const [tempImage, setTempImage] = useState<string | null>(null)
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null)
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
 
     const onSelectFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -59,7 +61,7 @@ export default function ImageUpload({ onUploadComplete, defaultValue }: ImageUpl
         }
     }
 
-    const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
+    const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
         setCroppedAreaPixels(croppedAreaPixels)
     }, [])
 
@@ -74,7 +76,7 @@ export default function ImageUpload({ onUploadComplete, defaultValue }: ImageUpl
             const blob = await response.blob()
 
             const fileName = `bottle-${Date.now()}.jpg`
-            const { data, error } = await supabase.storage
+            const { error } = await supabase.storage
                 .from("bottleshare")
                 .upload(fileName, blob, {
                     contentType: "image/jpeg",
@@ -206,7 +208,7 @@ export default function ImageUpload({ onUploadComplete, defaultValue }: ImageUpl
 
             {image && !cropMode && (
                 <div className="relative rounded-xl overflow-hidden aspect-[4/3] group shadow-xl ring-1 ring-primary/20">
-                    <img src={image} alt="Whisky" className="w-full h-full object-cover" />
+                    <Image src={image} alt="Whisky" fill className="object-cover" unoptimized />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
                         <Button
                             type="button"

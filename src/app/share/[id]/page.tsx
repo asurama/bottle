@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Calendar, MapPin, Beer, GlassWater, Clock, Info, Pencil, Trash2, CalendarRange } from "lucide-react"
+import { Calendar, MapPin, Beer, GlassWater, Clock, Info, Pencil, CalendarRange } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { JoinButton } from "@/components/share/join-button"
@@ -39,9 +39,8 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
     const progress = (occupiedSlots / share.totalSlots) * 100
     const isFinished = share.status !== "OPEN" || occupiedSlots >= share.totalSlots
 
-    const sessionUser = session?.user as any
-    const isOwner = sessionUser?.id === share.creatorId
-    const isAdmin = sessionUser?.role === "ADMIN"
+    const isOwner = session?.user?.id === share.creatorId
+    const isAdmin = session?.user?.role === "ADMIN"
     const canManage = isOwner || isAdmin
 
     const formatDate = (date: Date | null) => {
@@ -144,7 +143,7 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">도착예정일 (정모일)</p>
                                         <span className="font-medium">
-                                            {(share as any).arrivalDate ? formatDate((share as any).arrivalDate) : "날짜 미정"}
+                                            {share.arrivalDate ? formatDate(share.arrivalDate) : "날짜 미정"}
                                         </span>
                                     </div>
                                 </div>

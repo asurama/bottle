@@ -7,7 +7,7 @@ const { auth } = NextAuth(authConfig)
 export default auth((req) => {
     const { nextUrl } = req
     const isLoggedIn = !!req.auth
-    const user = req.auth?.user as any
+    const user = req.auth?.user
     const pathname = nextUrl.pathname
 
     // 1. If not logged in and trying to access protected routes, redirect to Sign In

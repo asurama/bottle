@@ -88,7 +88,7 @@ export default async function Home({
                     status={share.status === "OPEN" ? "RECRUITING" : "FINISHED"}
                     condition={share.condition}
                     category={share.category}
-                    endDate={(share as any).endDate}
+                    endDate={share.endDate}
                   />
                 )
               })

@@ -13,7 +13,7 @@ import { User, Calendar, CreditCard, Loader2 } from "lucide-react"
 // though a real server action is better. Let's create a server action for this.
 
 export default function ProfileSetupPage() {
-    const { data: session, update } = useSession()
+    const { update } = useSession()
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
