@@ -44,10 +44,5 @@ This will sync your local `schema.prisma` with the Supabase PostgreSQL database.
 4. Add the **Environment Variables** listed above.
 5. Click **Deploy**.
 
-## 5. Troubleshooting: Dependency Conflicts (ERESOLVE)
-Vercel 빌드 중 `ERESOLVE could not resolve` 에러가 발생하면, 다음이 적용되어 있는지 확인하세요:
-- **`.npmrc` 파일**: 루트 디렉토리에 `legacy-peer-deps=true` 내용이 포함된 파일이 있어야 합니다 (방금 추가됨).
-- 이 설정은 `nodemailer`와 `next-auth` 간의 버전 충돌을 건너뛰고 설치를 진행하게 해줍니다.
-
 ---
 *If you encounter a 500 error after deployment, check the Vercel Logs for Prisma or Auth.js related errors.*
