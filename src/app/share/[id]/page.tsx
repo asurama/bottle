@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Calendar, MapPin, Beer, GlassWater, Clock, Info } from "lucide-react"
+import { Calendar, MapPin, Beer, GlassWater, Clock, Info, Pencil, Trash2, CalendarRange } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { JoinButton } from "@/components/share/join-button"
@@ -11,6 +11,7 @@ import { ParticipationList } from "@/components/share/participation-list"
 import { CommentSection } from "@/components/share/comment-section"
 import Link from "next/link"
 import { auth } from "@/auth"
+import { DeleteShareButton } from "@/components/share/delete-share-button"
 
 export default async function ShareDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -38,22 +39,44 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
     const progress = (occupiedSlots / share.totalSlots) * 100
     const isFinished = share.status !== "OPEN" || occupiedSlots >= share.totalSlots
 
+    const sessionUser = session?.user as any
+    const isOwner = sessionUser?.id === share.creatorId
+    const isAdmin = sessionUser?.role === "ADMIN"
+    const canManage = isOwner || isAdmin
+
+    const formatDate = (date: Date | null) => {
+        if (!date) return null
+        return new Date(date).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
+    }
+
     return (
         <main className="min-h-screen bg-background pb-20">
             <div className="max-w-6xl mx-auto px-4 pt-8 md:pt-12 space-y-12">
-                <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors inline-block">
-                    ← 목록으로 돌아가기
-                </Link>
+                <div className="flex items-center justify-between">
+                    <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors inline-block">
+                        ← 목록으로 돌아가기
+                    </Link>
+                    {canManage && (
+                        <div className="flex items-center gap-2">
+                            <Link href={`/share/${id}/edit`}>
+                                <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs font-bold border-primary/20 hover:bg-primary/5">
+                                    <Pencil className="w-3 h-3" /> 수정
+                                </Button>
+                            </Link>
+                            <DeleteShareButton shareId={id} />
+                        </div>
+                    )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {/* Left Side: Image Section */}
                     <div className="space-y-6">
-                        <AspectRatio ratio={3 / 4} className="rounded-2xl overflow-hidden border border-border/50 bg-muted shadow-2xl">
+                        <AspectRatio ratio={3 / 4} className="rounded-2xl overflow-hidden border-2 border-primary/20 bg-muted shadow-[0_0_50px_rgba(234,179,8,0.1)]">
                             <Image
                                 src={share.whiskyImage || "https://images.unsplash.com/photo-1599566217208-aa9281d3d197?q=80&w=1974&auto=format&fit=crop"}
                                 alt={share.whiskyName}
                                 fill
-                                className="object-cover"
+                                className="object-cover brightness-[1.02]"
                             />
                         </AspectRatio>
 
@@ -103,14 +126,34 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
 
                         <Card className="border-border/30 bg-card/30">
                             <CardContent className="p-4 space-y-3">
-                                <div className="flex items-center gap-3 text-sm">
-                                    <Calendar className="w-4 h-4 text-primary" />
-                                    <span className="font-medium">{share.eventDate || "날짜 미정"} 정모/도착</span>
+                                {/* Progress Period */}
+                                {(share.startDate || share.endDate) && (
+                                    <div className="flex items-start gap-3 text-sm">
+                                        <CalendarRange className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">진행 기간</p>
+                                            <span className="font-medium">
+                                                {formatDate(share.startDate as Date | null)} ~ {formatDate(share.endDate as Date | null)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                {/* Arrival Date */}
+                                <div className="flex items-start gap-3 text-sm">
+                                    <Calendar className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">도착예정일 (정모일)</p>
+                                        <span className="font-medium">
+                                            {(share as any).arrivalDate ? formatDate((share as any).arrivalDate) : "날짜 미정"}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm">
-                                    <MapPin className="w-4 h-4 text-primary" />
-                                    <span className="font-medium">{share.eventLocation || "장소 미정"}</span>
-                                </div>
+                                {share.eventLocation && (
+                                    <div className="flex items-center gap-3 text-sm">
+                                        <MapPin className="w-4 h-4 text-primary" />
+                                        <span className="font-medium">{share.eventLocation}</span>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
@@ -158,7 +201,7 @@ export default async function ShareDetailPage({ params }: { params: Promise<{ id
                             {session ? (
                                 <JoinButton shareId={share.id} disabled={isFinished} />
                             ) : (
-                                <Link href="/api/auth/signin" className="w-full">
+                                <Link href="/auth/signin" className="w-full">
                                     <Button variant="outline" className="w-full h-16 text-lg font-bold border-primary/50 text-primary hover:bg-primary/10">
                                         로그인하고 쉐어 참여하기
                                     </Button>

@@ -45,7 +45,7 @@ export function Header() {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="sm" className="border-primary/20 bg-primary/5 font-bold">
                                     <User className="w-4 h-4 mr-2" />
-                                    {session.user?.name || "사용자"}
+                                    {(session.user as any)?.nickname || session.user?.name || "사용자"}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48 bg-card/95 backdrop-blur-lg border-primary/20">
@@ -56,7 +56,7 @@ export function Header() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <Link href="/api/auth/signin">
+                        <Link href="/auth/signin">
                             <Button size="sm" className="font-bold">로그인</Button>
                         </Link>
                     )}
@@ -89,7 +89,7 @@ export function Header() {
                                 <>
                                     <DropdownMenuItem className="font-bold py-3 text-muted-foreground">
                                         <User className="w-4 h-4 mr-2" />
-                                        {session.user?.name || "사용자"}님
+                                        {(session.user as any)?.nickname || session.user?.name || "사용자"}님
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => signOut()} className="text-destructive font-bold py-3 cursor-pointer">
                                         <LogOut className="w-4 h-4 mr-2" />
@@ -97,7 +97,7 @@ export function Header() {
                                     </DropdownMenuItem>
                                 </>
                             ) : (
-                                <Link href="/api/auth/signin">
+                                <Link href="/auth/signin">
                                     <DropdownMenuItem className="font-bold py-3 cursor-pointer">
                                         로그인
                                     </DropdownMenuItem>

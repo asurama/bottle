@@ -12,7 +12,7 @@ interface Participation {
     userId: string
     slots: number
     status: string
-    user?: { name?: string | null; email?: string | null }
+    user?: { name?: string | null; email?: string | null; nickname?: string | null }
 }
 
 interface ParticipationListProps {
@@ -68,7 +68,7 @@ export function ParticipationList({ participations, currentUserId, hostId }: Par
                                 <tr key={p.id} className={isMe ? "bg-primary/5" : ""}>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-2">
-                                            <span className="font-bold">{p.user?.name || p.user?.email || "Unknown"}</span>
+                                            <span className="font-bold">{p.user?.nickname || p.user?.name || p.user?.email || "Unknown"}</span>
                                             {isMe && <Badge className="text-[9px] h-4">Me</Badge>}
                                             {p.userId === hostId && <Badge variant="outline" className="text-[9px] h-4 border-primary text-primary">Host</Badge>}
                                         </div>
